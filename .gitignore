@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Atmel studio files
+Debug/
+
+# User configuration
+version.h

@@ -9,4 +9,12 @@ If you need uart communication, you need to run `u_init` from `UART parser.h` as
 
 # Build
 
+Copy `project_defines example.h` and `settings example.ini` removing 'example' part from filename to your project root directory. Edit accordingly to your settings.
+
+## Build number
+
 You need to run `build number.py` with full path to `version.h` before build to update version number (it is current timestamp in uint32).
+
+## Settings (EEPROM map)
+
+You need to run `KagamiCore/settings map.py "settings.ini" "project_settings.h" "project_settings.c"`
