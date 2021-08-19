@@ -6,6 +6,7 @@
  */
 #include "../KagamiCore/RF model.h"
 #include "../KagamiCore/nRF model.h"
+#include "../KagamiCore/defines.h"
 #ifndef UNIT_TESTING
     #include <avr/interrupt.h>
 	#include "Settings.h"

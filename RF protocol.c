@@ -140,7 +140,6 @@ void generateAdvertisement(uint8_t *packetLength, uint8_t *packetData) {
 
 void protocolInit() {
 	lastTransacrionId = 0;
-	RFCustomFunctionsInit();
 }
 
 #endif

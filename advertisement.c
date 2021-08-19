@@ -6,8 +6,9 @@
  */ 
 
 #include "advertisement.h"
-#include "../defines.h"
+#include "defines.h"
 #include "RF model.h"
+#include <avr/io.h>
 
 static int adv = 0;
 // anti-rattle
@@ -28,7 +29,7 @@ void advertisement_process() {
 		switchMode(emSearchMaster);
 	}
 	// show the state on led
-	if (emSearchMaster == getMode()) {
+	if (emSearchMaster == getRFMode()) {
 		ADV_LED_PORT |= _BV(ADV_LED_PIN);
 	} else {
 		ADV_LED_PORT &= _BV(ADV_LED_PIN);
