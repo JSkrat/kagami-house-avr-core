@@ -18,3 +18,14 @@ You need to run `build number.py` with full path to `version.h` before build to 
 ## Settings (EEPROM map)
 
 You need to run `KagamiCore/settings map.py "settings.ini" "project_settings.h" "project_settings.c"`
+
+# Hardware
+
+## nrf module connections
+
+NRF24L01 module should be connected to port B:
+
+- IRQ to PB0
+- CSN to PB1
+- CE to PB2
+- rest of spi to spi on port B (PB3, PB4, PB5)

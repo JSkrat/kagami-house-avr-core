@@ -10,17 +10,7 @@
 #define SETTINGS_H_
 
 #include <stdint.h>
-
-typedef enum {
-	esKey,
-	esAddress,
-	esChannel,
-	esMode,
-	esU0Description,
-	esU1Description,
-	// for validation only
-	esAmount
-} eSetting;
+#include "../project_settings.h"
 
 uint8_t readSetting(eSetting type, void *output);
 uint8_t saveSetting(eSetting type, const void *data);
