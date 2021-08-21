@@ -12,4 +12,6 @@
 #define portTransiever PORTB
 #define PORT_IN_TRANSIEVER PINB
 #define poTransiever_IRQ PORTB0
+// 8-bit timer number to use inside KagamiCore
+#define RF_TIMER 2
 

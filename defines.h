@@ -26,6 +26,6 @@
 /*** USART ***/
 #define BAUDRATE 200000
 
-#include "../project_defines.h"
+#include "../project defines.h"
 
 #endif /* DEFINES_INTERNAL_H_ */
