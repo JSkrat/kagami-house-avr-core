@@ -38,7 +38,7 @@ typedef enum {
 h.close()
 
 c.write("""
-#include "project_settings.h"
+#include "project settings.h"
 #include "KagamiCore/defines.h"
 #include <stdint.h>
 
