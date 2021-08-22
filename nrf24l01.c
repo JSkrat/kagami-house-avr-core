@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <avr/io.h>
+// only for the F_CPU define, for the consequent delay.h
+#include "defines.h"
 #include <util/delay.h>
 #include <string.h>
 #include "nrf24l01.h"

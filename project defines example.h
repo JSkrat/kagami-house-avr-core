@@ -1,3 +1,4 @@
+#define F_CPU 8000000
 
 // RF mode
 #define BUILD_TYPE BT_SLAVE

@@ -7,13 +7,13 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "../KagamiCore/defines.h"
 #ifndef UNIT_TESTING
 	#include <avr/interrupt.h>
 	#include <util/delay.h>
 #endif
 #include "../KagamiCore/nrf24l01-mnemonics.h"
 #include "../KagamiCore/nrf24l01.h"
-#include "../KagamiCore/defines.h"
 #include "../KagamiCore/nRF model.h"
 #include "../KagamiCore/RF info.h"
 
