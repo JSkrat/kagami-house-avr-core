@@ -4,8 +4,8 @@
  * Created: 16.05.2020 16:37:43
  *  Author: Mintytail
  */ 
+#include "defines.h"
 #if BT_MASTER == BUILD_TYPE || defined UNIT_TESTING
-
 #include "../KagamiCore/RF model.h"
 #ifndef UNIT_TESTING
 	#include <avr/interrupt.h>
@@ -28,7 +28,11 @@ static int responseTimeout; // negative value means it is disabled, event trigge
 static t_address ListenAddress;
 
 #ifndef UNIT_TESTING
+#if 0 == RF_TIMER
 ISR(TIMER0_COMPA_vect) {
+#elif 2 == RF_TIMER
+ISR(TIMER2_COMPA_vect) {
+#endif
 	// this is being called every millisecond
 	msEvent();
 }
@@ -40,10 +44,17 @@ void rf_master_init() {
 	responseTimeout = -1;
 #ifndef UNIT_TESTING
 	// now let's setup timer
+#if 0 == RF_TIMER
 	TCCR0A = (1 << WGM01) | (0 << WGM00); // CTC mode
 	TCCR0B = (0 << CS02) | (1 << CS01) | (1 << CS00) | (0 << WGM02); // clk_io/64
 	OCR0A = 250; // compare match interrupt every millisecond
 	TIMSK0 = (1 << OCIE0A);
+#elif 2 == RF_TIMER
+	TCCR2A = (1 << WGM21) | (0 << WGM20); // CTC mode
+	TCCR2B = (0 << CS22) | (1 << CS21) | (1 << CS20) | (0 << WGM22); // clk_io/64
+	OCR2A = 250; // compare match interrupt every millisecond
+	TIMSK2 = (1 << OCIE2A);
+#endif
 #endif
 }
 

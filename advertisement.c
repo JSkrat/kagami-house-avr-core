@@ -10,6 +10,7 @@
 #include "RF model.h"
 #include <avr/io.h>
 
+#ifdef USE_ADVERTISEMENT
 static int adv = 0;
 // anti-rattle
 #define ADV_TRIGGER 2
@@ -35,3 +36,4 @@ void advertisement_process() {
 		ADV_LED_PORT &= _BV(ADV_LED_PIN);
 	}
 }
+#endif

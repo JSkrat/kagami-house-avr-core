@@ -8,7 +8,7 @@
 #include "defines.h"
 #include <avr/eeprom.h>
 #include <stdint.h>
-#include "../project_settings.c"
+#include "../project settings.c"
 
 uint8_t readSetting(eSetting type, void *output) {
 	if (esAmount <= type) return 0;

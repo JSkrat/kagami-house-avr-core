@@ -2,6 +2,7 @@
 // RF mode
 #define BUILD_TYPE BT_SLAVE
 // advertisement
+#define USE_ADVERTISEMENT
 #define ADV_BUTTON_PORT PIND
 #define ADV_BUTTON_DDR DDRD
 #define ADV_BUTTON_PIN PIND0

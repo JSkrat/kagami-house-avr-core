@@ -123,8 +123,7 @@
       </AvrGcc>
     </ToolchainSettings>
     <PreBuildEvent>python "$(MSBuildProjectDirectory)\build number.py" "$(MSBuildProjectDirectory)\version.h
-
-python "$(MSBuildProjectDirectory)\settings map.py" "$(MSBuildProjectDirectory)\..\settings.ini" "$(MSBuildProjectDirectory)\..\project_settings.h" "$(MSBuildProjectDirectory)\..\project_settings.c"</PreBuildEvent>
+python "$(MSBuildProjectDirectory)\settings map.py" "$(MSBuildProjectDirectory)\..\settings.ini" "$(MSBuildProjectDirectory)\..\project settings.h" "$(MSBuildProjectDirectory)\..\project settings.c"</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="advertisement.c">

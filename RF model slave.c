@@ -4,6 +4,7 @@
  * Created: 16.05.2020 19:46:45
  *  Author: Mintytail
  */ 
+#include "defines.h"
 #if BT_SLAVE == BUILD_TYPE
 #include "../KagamiCore/RF model.h"
 #ifndef UNIT_TESTING
@@ -17,7 +18,6 @@
 #include "sstring.h"
 #include "../KagamiCore/RF info.h"
 #include "../KagamiCore/RF protocol.h"
-#include "defines.h"
 
 static int16_t responseTimeout; // negative value means it is disabled, event triggered when it becomes disabled
 static t_address ListenAddress;
