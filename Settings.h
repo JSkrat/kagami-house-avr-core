@@ -10,7 +10,7 @@
 #define SETTINGS_H_
 
 #include <stdint.h>
-#include "../project_settings.h"
+#include "../project settings.h"
 
 uint8_t readSetting(eSetting type, void *output);
 uint8_t saveSetting(eSetting type, const void *data);
