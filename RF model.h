@@ -75,6 +75,9 @@ eModeType getRFMode();
 // only for use within RF model master/slave
 extern uint8_t RFChannel;
 
+// for internal use in RF model master/slave
+t_address ListenAddress;
+
 #ifdef UNIT_TESTING
 	// one call for every millisecond of time
 	// for testing response timeouts in a master mode

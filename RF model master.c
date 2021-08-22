@@ -25,7 +25,6 @@ static tRfPacket RFBuffer[RFBUFFER_SIZE];
 // end points to the next free space
 static int rfbBegin = 0, rfbEnd = 0, rfbSize = 0;
 static int responseTimeout; // negative value means it is disabled, event triggered when it becomes disabled
-static t_address ListenAddress;
 
 #ifndef UNIT_TESTING
 #if 0 == RF_TIMER

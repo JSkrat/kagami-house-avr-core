@@ -24,7 +24,7 @@ void transmissionFailed(sString *address, sString *payload);
 void rf_master_init();
 void rf_slave_init();
 
-static t_address ListenAddress;
+t_address ListenAddress;
 uint8_t RFChannel;
 
 void rf_init() {

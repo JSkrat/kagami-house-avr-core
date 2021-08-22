@@ -20,7 +20,6 @@
 #include "../KagamiCore/RF protocol.h"
 
 static int16_t responseTimeout; // negative value means it is disabled, event triggered when it becomes disabled
-static t_address ListenAddress;
 static eModeType eMode;
 
 void switchMode(eModeType newMode);
