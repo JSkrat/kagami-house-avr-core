@@ -23,6 +23,23 @@
 #define SLAVE_RESPONSE_TIMEOUT_MS 20
 #define SLAVE_REQUEST_TIMEOUT_MS 500
 
+// re-define that with code to run in case of packet damaging error, like spi communication error or wrong response length
+// if error should lead to program halt, it should be implemented in that macro
+// codes are:
+// 0 for incorrect message length in nrf24l01.c/nRF24L01_read_received_data
+// 1 for incorrect response length in RF protocol.c/generateResponse
+// 2 for incorrect payload length in nRF model.c/nRF_transmit
+// 3 for RFBUFFER overflow in RF model master.c/dataReceived
+// 4 for RFBUFFER overflow in RF model master.c/dataTransmitted
+// 5 for RFBUFFER overflow in RF model master.c/transmissionFailed
+// 6 for RFBUFFER overflow in RF model master.c/responseTimeoutEvent
+// 7 for oversized payload size in RF model.c/RFTransmit
+#define RF_ERROR(code) while (1);
+
+/*enum eInternalErrorCode {
+	eie
+};*/
+
 /*** USART ***/
 #define BAUDRATE 200000
 

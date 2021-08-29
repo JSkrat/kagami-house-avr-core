@@ -106,7 +106,7 @@ void transmissionFailed(sString *address, sString *payload) {
 	// transiever should be set up in such a way, that if it timeouted, it is ok, we just give up.
 	nRF_setRFChannel(RFChannel);
 	RFListen((uint8_t*) &ListenAddress);
-	ack_timeouts++;
+	//ack_timeouts++;
 }
 
 static void responseTimeoutEvent() {

@@ -25,8 +25,8 @@ void advertisement_process() {
 	// check the button
 	if (ADV_TRIGGER > adv) {
 		if (ADV_BUTTON_PORT & _BV(ADV_BUTTON_PIN)) adv++;
+		else adv = 0;
 	} else {
-		adv = 0;
 		switchMode(emSearchMaster);
 	}
 	// show the state on led

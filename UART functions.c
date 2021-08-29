@@ -134,6 +134,12 @@ uint8_t uTransmit(const scString *request, sString *response) {
 	if (MAC_SIZE > request->length) {
 		return eucArgumentValidationError;
 	}
+	if (PAYLOAD_SIZE + MAC_SIZE < request->length) {
+		return eucArgumentValidationError;
+	}
+	if (2 > RFBufferSpaceLeft()) {
+		return eucMemoryError;
+	}
 	tRfPacket packet;
 	memcpy(packet.address, request->data, MAC_SIZE);
 	packet.payloadLength = request->length - MAC_SIZE;

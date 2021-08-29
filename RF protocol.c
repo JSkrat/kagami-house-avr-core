@@ -18,6 +18,7 @@
 #include <stddef.h> // for offsetof
 #include "../KagamiCore/RF protocol internal.h"
 #include "../KagamiCore/RF info.h"
+#include "defines.h"
 //#include "../KagamiCore/RF custom functions.h"
 
 
@@ -27,6 +28,7 @@
 enum eResponseCodes validatePacket(const uint8_t length, const sRequest *data) {
 	// first lets check the packet minimum length
 	if (offsetof(sRequest, rqData) > length) return ercBadRequestData;
+	if (PAYLOAD_SIZE < length) return ercBadRequestData;
 	// check the contents
 	if (PROTOCOL_VERSION != data->rqVersion) return ercBadVersion;
 	/*if (lastTransacrionId+1 != data->rqTransactionId) {
@@ -100,6 +102,13 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 				&responseArg
 			);
 			*responseLength += responseArg.length;
+			if (PAYLOAD_SIZE < *responseLength) {
+				RF_ERROR(1);
+				// in case error handler does not halt
+				*responseLength = 1;
+				RESPONSE_DATA->rsCode = ercInternalError;
+				RESPONSE_DATA->rsData[0] = 1;
+			}
 			// update statistics
             if (0x80 > RESPONSE_DATA->rsCode) ok_responses++;
 			else error_responses++;

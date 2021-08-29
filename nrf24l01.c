@@ -99,6 +99,7 @@ bool nRF24L01_data_received(nRF24L01 *rf) {
 
 void nRF24L01_listen(nRF24L01 *rf, int pipe, uint8_t *address) {
     uint8_t addr[5];
+	// write register will replace addr with 0xFF x5
     copy_address(address, addr);
 
     nRF24L01_write_register(rf, RX_ADDR_P0 + pipe, addr, 5);
@@ -119,6 +120,12 @@ bool nRF24L01_read_received_data(nRF24L01 *rf, nRF24L01Message *message) {
         return false;
     }
     nRF24L01_send_command(rf, R_RX_PL_WID, &message->length, 1);
+	// in case there is some spi communication error
+	if (32 < message->length) {
+		message->length = 0;
+		RF_ERROR(0);
+		return false;
+	}
     if (message->length > 0) {
         nRF24L01_send_command(rf, R_RX_PAYLOAD, &message->data, message->length);
     }
@@ -223,7 +230,7 @@ static void spi_init(nRF24L01 *rf) {
     // SPI mode 0: Clock Polarity CPOL = 0, Clock Phase CPHA = 0
     SPCR &= ~_BV(CPOL);
     SPCR &= ~_BV(CPHA);
-    // Clock 2X speed
+    // Clock 2X speed (f_osc/2)
     SPCR &= ~_BV(SPR0);
     SPCR &= ~_BV(SPR1);
     SPSR |= _BV(SPI2X);

@@ -23,7 +23,7 @@ void parse(unsigned char b);
 static bool escActive;
 uPackage respBuffer;
 
-// +1 for make sure begin and end will be equal only at empty buffer
+// 0xC0, mac, payload, +1 for make sure begin and end will be equal only at empty buffer
 #define SEND_BUFFER_SIZE ((1 + MAC_SIZE + PAYLOAD_SIZE + 1)*2)
 uint8_t sendBuffer[SEND_BUFFER_SIZE];
 /// sendBufferBegin points to next character to send

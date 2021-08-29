@@ -61,6 +61,7 @@ enum eResponseCodes {
 	ercResponseTooBig = 0xD0,
 
 	ercBadRequestData = 0xE0,
+	ercInternalError = 0xFF,
 };
 
 void generateResponse(const uint8_t requestLength, const uint8_t *requestData, uint8_t *responseLength, uint8_t *responseData);

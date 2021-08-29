@@ -134,6 +134,11 @@ void nRF_listen(const uint8_t *address) {
 }
 
 void nRF_transmit(uint8_t *address, uint8_t length, uint8_t *data) {
+	// validation first
+	if (PAYLOAD_SIZE < length) {
+		RF_ERROR(2);
+		return;
+	}
 	// without CE changing from low to high transmission won't start
 	set_low(rfTransiever->ce);
 	_delay_us(10);
@@ -160,8 +165,10 @@ bool nRF_validate_rf_channel(uint8_t channel) {
 bool nRF_setRFChannel(uint8_t channel) {
 	if (nRF_validate_rf_channel(channel)) {
 		if (rf_channel != channel) {
-			nRF24L01_write_register(rfTransiever, RF_CH, &channel, 1);
+			// write register overwrites the buffer, so save it first
 			rf_channel = channel;
+			// then write to transciever
+			nRF24L01_write_register(rfTransiever, RF_CH, &channel, 1);
 		}
 		return true;
 	} else {

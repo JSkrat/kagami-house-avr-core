@@ -18,6 +18,8 @@
 
 static inline void msEvent(void);
 
+// received packages or events buffer
+// outside module shall get data from here by nextRFBufferElement
 #define RFBUFFER_SIZE 8
 static tRfPacket RFBuffer[RFBUFFER_SIZE];
 // push to the end, pop from the begin
@@ -61,27 +63,34 @@ void rf_master_init() {
  * RF buffer functions
  */
 tRfPacket* nextRFBufferFreeElement() {
-	if (RFBUFFER_SIZE <= rfbSize++) {
-		rfbSize--;
-		return NULL;
-	}
-	tRfPacket *ret = &(RFBuffer[rfbEnd++]);
+	if (RFBUFFER_SIZE <= rfbSize) return NULL;
+	rfbSize += 1;
+	tRfPacket *ret = &(RFBuffer[rfbEnd]);
+	rfbEnd += 1;
 	if (RFBUFFER_SIZE <= rfbEnd) rfbEnd = 0;
 	return ret;
 }
 
+/// get next element from FIFO
+/// not threadsafe, so only can be called from within the interrupt handler, under CLI
 tRfPacket* nextRFBufferElement() {
 	if (0 >= rfbSize) return NULL;
-	rfbSize--;
-	tRfPacket *ret = &(RFBuffer[rfbBegin++]);
+	rfbSize -= 1;
+	tRfPacket *ret = &(RFBuffer[rfbBegin]);
+	rfbBegin += 1;
 	if (RFBUFFER_SIZE <= rfbBegin) rfbBegin = 0;
 	return ret;
+}
+
+uint8_t RFBufferSpaceLeft() {
+	return RFBUFFER_SIZE - rfbSize;
 }
 
 void dataReceived(sString *address, sString *payload) {
 	// event, one per received packet
 	tRfPacket *request = nextRFBufferFreeElement();
 	if (NULL == request) {
+		RF_ERROR(3);
 		return;
 	}
 	request->type = eptData;
@@ -98,6 +107,7 @@ void dataTransmitted(sString *address, sString *payload) {
 	// ack received, tx successful
 	tRfPacket *request = nextRFBufferFreeElement();
 	if (NULL == request) {
+		RF_ERROR(4);
 		return;
 	}
 	request->type = eptAckOk;
@@ -113,6 +123,7 @@ void transmissionFailed(sString *address, sString *payload) {
 	// no ack received n times
 	tRfPacket *request = nextRFBufferFreeElement();
 	if (NULL == request) {
+		RF_ERROR(5);
 		return;
 	}
 	request->type = eptAckTimeout;
@@ -124,6 +135,7 @@ static inline void responseTimeoutEvent() {
 	// no response from the requested slave
 	tRfPacket *packet = nextRFBufferFreeElement();
 	if (NULL == packet) {
+		RF_ERROR(6);
 		return;
 	}
 	packet->type = eptResponseTimeout;

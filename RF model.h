@@ -70,6 +70,7 @@ bool RFSetChannel(uint8_t channel);
 void switchMode(eModeType newMode);
 void setListenAddress(t_address *address);
 tRfPacket* nextRFBufferElement();
+uint8_t RFBufferSpaceLeft();
 eModeType getRFMode();
 
 // only for use within RF model master/slave
