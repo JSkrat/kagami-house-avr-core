@@ -40,6 +40,9 @@
 	eie
 };*/
 
+// re-define that with code to run when enter and exit all RF functions
+#define RF_FUNCTION(enter, unit, function)
+
 /*** USART ***/
 #define BAUDRATE 200000
 

@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <string.h> // for NULL
 #include <stddef.h> // for offsetof
+#include <stdbool.h>
 #include "../KagamiCore/RF protocol internal.h"
 #include "../KagamiCore/RF info.h"
 #include "defines.h"
@@ -72,6 +73,7 @@ fRFFunction findFunctionByCode(uint8_t unit, eU0Functions code) {
 }
 
 void generateResponse(const uint8_t requestLength, const uint8_t *requestData, uint8_t *responseLength, uint8_t *responseData) {
+	RF_FUNCTION(true, 0, 0);
 	// response should be already allocated for that function
 	#define REQUEST_DATA ((const sRequest*) requestData)
 	#define RESPONSE_DATA ((sResponse*) responseData)
@@ -131,6 +133,7 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 	}
 	#undef RESPONSE_DATA
 	#undef REQUEST_DATA
+	RF_FUNCTION(false, 0, 0);
 }
 
 void generateAdvertisement(uint8_t *packetLength, uint8_t *packetData) {
