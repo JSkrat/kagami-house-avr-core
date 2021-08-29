@@ -16,7 +16,7 @@ static int adv = 0;
 #define ADV_TRIGGER 2
 
 void advertisement_init() {
-	ADV_BUTTON_DDR &= _BV(ADV_BUTTON_PIN);
+	ADV_BUTTON_DDR &= ~_BV(ADV_BUTTON_PIN);
 	ADV_LED_DDR |= _BV(ADV_LED_PIN);
 }
 
@@ -33,7 +33,7 @@ void advertisement_process() {
 	if (emSearchMaster == getRFMode()) {
 		ADV_LED_PORT |= _BV(ADV_LED_PIN);
 	} else {
-		ADV_LED_PORT &= _BV(ADV_LED_PIN);
+		ADV_LED_PORT &= ~_BV(ADV_LED_PIN);
 	}
 }
 #endif
