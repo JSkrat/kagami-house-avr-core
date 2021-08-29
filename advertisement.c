@@ -18,6 +18,7 @@ static int adv = 0;
 void advertisement_init() {
 	ADV_BUTTON_DDR &= ~_BV(ADV_BUTTON_PIN);
 	ADV_LED_DDR |= _BV(ADV_LED_PIN);
+	adv = 0;
 }
 
 /// call this continuously in a main loop between sleeps
