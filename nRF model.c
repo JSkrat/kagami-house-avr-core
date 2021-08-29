@@ -91,12 +91,15 @@ ISR(PCINT0_vect) {
 		// 2) clear RX_DR IRQ,
 		// 3) read FIFO_STATUS to check if there are more payloads available in RX FIFO,
 		// 4) if there are more data in RX FIFO, repeat from step 1).
-		sString payload;
 		nRF24L01Message msg;
+		sString payload = {
+			.length = 0,
+			.data = &msg.data[0],
+		};
 		do {
 			nRF24L01_read_received_data(rfTransiever, &msg);
 			payload.length = msg.length;
-			memcpy(payload.data, &(msg.data), msg.length);
+			// payload data is linked to msg data at initialization, so do not touch it :)
 			// read pipe 1 address first, so if it is 2-5 we could overwrite last byte to make correct address
 			//if (0 != msg.pipe_number) nRF24L01_read_register(rfTransiever, RX_ADDR_P1, address.data, MAC_SIZE);
 			switch (msg.pipe_number) {

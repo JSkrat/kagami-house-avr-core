@@ -81,12 +81,15 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 	RESPONSE_DATA->rsVersion = PROTOCOL_VERSION;
 	RESPONSE_DATA->rsTransactionId = REQUEST_DATA->rqTransactionId;
     RESPONSE_DATA->rsCode = (uint8_t) validation;
-	*responseLength = 3; // length of the empty response, without any data
+	*responseLength = RESPONSE_HEADER_SIZE; // length of the empty response, without any data
 	switch (validation) {
 		case ercOk: {
             fRFFunction method = findFunctionByCode(REQUEST_DATA->rqUnitId, REQUEST_DATA->rqFunctionId);
 			if (NULL == method) {
 				RESPONSE_DATA->rsCode = ercBadFunctionId;
+				*responseLength += 2;
+				RESPONSE_DATA->rsData[0] = REQUEST_DATA->rqUnitId;
+				RESPONSE_DATA->rsData[1] = REQUEST_DATA->rqFunctionId;
 				break;
 			}
 			const scString requestArg = {
