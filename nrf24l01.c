@@ -119,11 +119,11 @@ bool nRF24L01_read_received_data(nRF24L01 *rf, nRF24L01Message *message) {
         message->length = 0;
         return false;
     }
-    nRF24L01_send_command(rf, R_RX_PL_WID, &message->length, 1);
-	// in case there is some spi communication error
+	nRF24L01_send_command(rf, R_RX_PL_WID, &message->length, 1);
+	// transciever (NRF24L01+) does not check that field in the package, only the crc
+	// so if accidentally crc in the noise is ok, that field might be anything, so just discard package then
 	if (32 < message->length) {
-		message->length = 0;
-		RF_ERROR(0);
+		nRF24L01_send_command(rf, FLUSH_RX, NULL, 0);
 		return false;
 	}
     if (message->length > 0) {
