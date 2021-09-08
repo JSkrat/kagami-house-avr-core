@@ -10,11 +10,6 @@
 #define UART_FUNCTIONS_H_
 
 #include "sstring.h"
-#ifndef UNIT_TESTING
-    #include <avr/pgmspace.h>
-#else
-    #include "../usb2nrf_tests/pgmspace.h"
-#endif
 #include <stddef.h>
 
 
