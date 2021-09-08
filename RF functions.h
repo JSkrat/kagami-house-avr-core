@@ -11,22 +11,24 @@
 
 #include "../KagamiCore/RF protocol.h"
 #include <stdint.h>
+#include <stdbool.h>
 #include "Settings.h"
 
+// nodes are 0 - 7F, methods are 80 - FF
 typedef enum {
-	eFSetSessionKey = 0x10,
-	eFSetAddress = 0x12,
-	eFGetStatistics = 0x13,
-    eFResetTransactionId = 0x14,
-	eFNOP = 0x15,
-	eFSetRFChannel = 0x16,
-	eFSetMode = 0x17,
+	eFSessionKey = 0x10,
+	eFAddress = 0x12,
+	eFStatistics = 0x13,
+	eFRFChannel = 0x16,
+	eFMode = 0x17,
+	
+	eFNOP = 0x10,
+    eFResetTransactionId = 0x11,
 } eU0Functions;
 
 typedef enum {
-	eFGetProperties = 0x00,
-	eFGetTextDescription = 0x02,
-	eFSetTextDescription = 0x03,
+	eFProperties = 0x00,
+	eFTextDescription = 0x02,
 } eStandartFunctions;
 
 // up to 16 items
@@ -43,13 +45,21 @@ typedef enum {
 typedef struct {
 	eDataType input: 4;
 	eDataType output: 4;
-} fDataType;
+} fMethodType;
+
+typedef struct {
+	bool readable: 1;
+	bool writable: 1;
+	char _reserved: 2;
+	eDataType dataType: 4;
+} fNodeType;
 
 typedef struct { // 4 bytes
-	eU0Functions functionCode;
+	fDataID dataId;
 	union {
-		uint8_t eDataInputOutput;
-		fDataType fields;
+		uint8_t byte;
+		fMethodType methodType;
+		fNodeType nodeType;
 	} type;
 	fRFFunction function;
 } tRFCodeFunctionItem;

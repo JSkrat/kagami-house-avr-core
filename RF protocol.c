@@ -45,10 +45,44 @@ enum eResponseCodes validatePacket(const uint8_t length, const sRequest *data) {
 	return ercOk;
 }
 
-fRFFunction findFunctionByCode(uint8_t unit, eU0Functions code) {
+enum eResponseCodes validateNodeArguments(const fNodeType nodeType, const uint8_t argumentsLength, const uint8_t const *arguments) {
+	(void) arguments;
+	if (0 == argumentsLength) {
+		if (nodeType.readable) return ercOk;
+		else return ercNodePermissionViolation;
+	} else {
+		if (! nodeType.writable) return ercNodePermissionViolation;
+		switch (nodeType.dataType) {
+			case edtBool: if (1 != argumentsLength) return ercBadArguments; break;
+			case edtByte: if (1 != argumentsLength) return ercBadArguments; break;
+			case edtInt32: if (4 != argumentsLength) return ercBadArguments; break;
+			default: break;
+		}
+		return ercOk;
+	}
+};
+
+enum eResponseCodes validateMethodArguments(const fMethodType methodType, const uint8_t argumentsLength, const uint8_t const *arguments) {
+	(void) arguments;
+	if (0 == argumentsLength) {
+		return ercOk;
+	} else {
+		switch (methodType.input) {
+			case edtBool: if (1 != argumentsLength) return ercBadArguments; break;
+			case edtByte: if (1 != argumentsLength) return ercBadArguments; break;
+			case edtInt32: if (4 != argumentsLength) return ercBadArguments; break;
+			default: break;
+		}
+		return ercOk;
+	}
+}
+
+tRFCodeFunctionItem findFunctionByCode(uint8_t unit, fDataID code) {
 	uint8_t count;
 	const tRFCodeFunctionItem *list;
-	if (0x10 > code) {
+	tRFCodeFunctionItem ret;
+	memset(&ret, 0, sizeof(tRFCodeFunctionItem));
+	if (0x10 > code.data.dataId) {
 		// search in common functions
 		count = fUCount;
 		list = RFStandardFunctions;
@@ -63,13 +97,15 @@ fRFFunction findFunctionByCode(uint8_t unit, eU0Functions code) {
 		}
 	}
 	for (uint8_t i = 0; i < count; i++) {
-		const uint8_t iCode = pgm_read_byte(&(list[i].functionCode));
-		if (iCode == code) {
-			fRFFunction iFunction = pgm_read_ptr(&(list[i].function));
-			return iFunction;
+		char iCode = pgm_read_byte(&(list[i].dataId));
+		if (iCode == code.byte) {
+			ret.dataId.byte = iCode;
+			ret.function = pgm_read_ptr(&(list[i].function));
+			ret.type.byte = pgm_read_byte(&(list[i].type));
+			break;
 		}
 	}
-	return NULL;
+	return ret;
 }
 
 void generateResponse(const uint8_t requestLength, const uint8_t *requestData, uint8_t *responseLength, uint8_t *responseData) {
@@ -78,18 +114,18 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 	#define REQUEST_DATA ((const sRequest*) requestData)
 	#define RESPONSE_DATA ((sResponse*) responseData)
 	enum eResponseCodes validation = validatePacket(requestLength, REQUEST_DATA);
-	RESPONSE_DATA->rsVersion = PROTOCOL_VERSION;
+	RESPONSE_DATA->rsVersion = RESPONSE_PROTOCOL_VERSION;
 	RESPONSE_DATA->rsTransactionId = REQUEST_DATA->rqTransactionId;
     RESPONSE_DATA->rsCode = (uint8_t) validation;
 	*responseLength = RESPONSE_HEADER_SIZE; // length of the empty response, without any data
 	switch (validation) {
 		case ercOk: {
-            fRFFunction method = findFunctionByCode(REQUEST_DATA->rqUnitId, REQUEST_DATA->rqFunctionId);
-			if (NULL == method) {
+            tRFCodeFunctionItem methodItem = findFunctionByCode(REQUEST_DATA->rqUnitId, REQUEST_DATA->rqFunctionId.rqFunctionId);
+			if (NULL == methodItem.function) {
 				RESPONSE_DATA->rsCode = ercBadFunctionId;
 				*responseLength += 2;
 				RESPONSE_DATA->rsData[0] = REQUEST_DATA->rqUnitId;
-				RESPONSE_DATA->rsData[1] = REQUEST_DATA->rqFunctionId;
+				RESPONSE_DATA->rsData[1] = REQUEST_DATA->rqFunctionId.byte;
 				break;
 			}
 			const scString requestArg = {
@@ -100,9 +136,17 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 				.length = 0,
 				.data = &(RESPONSE_DATA->rsData[0])
 			};
-			RESPONSE_DATA->rsCode = (*method)(
+			// validate arguments
+			if (ediNode == methodItem.dataId.data.type) {
+				RESPONSE_DATA->rsCode = validateNodeArguments(methodItem.type.nodeType, requestArg.length, requestArg.data);
+			} else { //if (ediMethod == methodItem.dataId.type) {
+				RESPONSE_DATA->rsCode = validateMethodArguments(methodItem.type.methodType, requestArg.length, requestArg.data);
+			}
+			if (ercOk != RESPONSE_DATA->rsCode) break;
+			// run the function \0/
+			RESPONSE_DATA->rsCode = (*(methodItem.function))(
 				REQUEST_DATA->rqUnitId,
-				REQUEST_DATA->rqFunctionId,
+				REQUEST_DATA->rqFunctionId.byte,
 				&requestArg,
 				&responseArg
 			);
@@ -140,15 +184,19 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 }
 
 void generateAdvertisement(uint8_t *packetLength, uint8_t *packetData) {
+	// advertisement is like a response to a function 0, unit 0, but with the protocol version
 	#define DATA ((sResponse*) packetData)
-	fRFFunction method = findFunctionByCode(0, eFGetProperties);
+	fDataID id;
+	id.data.type = ediNode; id.data.dataId = eFProperties;
+	tRFCodeFunctionItem code = findFunctionByCode(0, id);
+	fRFFunction method = code.function;
 	sString responseArg = {
 		.length = 0,
 		.data = &(DATA->rsData[0])
 	};
-	DATA->rsVersion = PROTOCOL_VERSION;
+	DATA->rsVersion = RESPONSE_PROTOCOL_VERSION;
 	DATA->rsTransactionId = 0xAA;
-	DATA->rsCode = (*method)(0, eFGetProperties, NULL, &responseArg);
+	DATA->rsCode = (*method)(0, eFProperties, NULL, &responseArg);
 	*packetLength = 3 + responseArg.length;
 	#undef DATA
 }

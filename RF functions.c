@@ -149,8 +149,8 @@ uint8_t getPropertiesOfUnit(const uint8_t unit, const uint8_t function, const sc
 		const tRFCodeFunctionItem *item;
 		if (fUCount > i) item = &RFStandardFunctions[i];
 		else item = &list[i-fUCount];
-		response->data[i*2] = pgm_read_byte(&(item->functionCode));
-		response->data[i*2+1] = pgm_read_byte(&(item->type.eDataInputOutput));
+		response->data[i*2] = pgm_read_byte(&(item->dataId));
+		response->data[i*2+1] = pgm_read_byte(&(item->type.byte));
 	}
 	return ercOk;
 }
@@ -160,15 +160,12 @@ eSetting _getUnitDescriptionId(const uint8_t unit) {
 	else return pgm_read_byte(&(RFUnits[unit-1].description));
 }
 
-uint8_t getTextDescription(const uint8_t unit, const uint8_t function, const scString *request, sString *response) {
+uint8_t textDescription(const uint8_t unit, const uint8_t function, const scString *request, sString *response) {
 	(void) function;
-	(void) request;
-	response->length = readSetting(_getUnitDescriptionId(unit), &(response->data[0]));
-	return ercOk;
-}
-
-uint8_t setTextDescription(const uint8_t unit, const uint8_t function, const scString *request, sString *response) {
-	(void) function;
+	if (0 == request->length) {
+		response->length = readSetting(_getUnitDescriptionId(unit), &(response->data[0]));
+		return ercOk;
+	}
 	response->length = readSetting(_getUnitDescriptionId(unit), &(response->data[0]));
 	if (response->length != request->length) return ercBadRequestData;
 	saveSetting(_getUnitDescriptionId(unit), &(request->data[0]));
@@ -176,19 +173,79 @@ uint8_t setTextDescription(const uint8_t unit, const uint8_t function, const scS
 }
 
 const PROGMEM tRFCodeFunctionItem RFStandardFunctions[fUCount] = {
-	{eFGetProperties, .function = &getPropertiesOfUnit, .type.fields.input = edtNone, .type.fields.output = edtUnspecified },
-	{eFGetTextDescription, .function = &getTextDescription, .type.fields.input = edtNone, .type.fields.output = edtString },
-	{eFSetTextDescription, .function = &setTextDescription, .type.fields.input = edtString, .type.fields.output = edtNone },
+	{
+		.dataId.type = ediNode,
+		.dataId.dataId = eFProperties,
+		.function = &getPropertiesOfUnit, 
+		.type.nodeType.dataType = edtUnspecified,
+		.type.nodeType.readable = true,
+		.type.nodeType.writable = false,
+	},
+	{
+		.dataId.type = ediNode,
+		.dataId.dataId = eFTextDescription, 
+		.function = &textDescription, 
+		.type.nodeType.dataType = edtString,
+		.type.nodeType.readable = true,
+		.type.nodeType.writable = true,
+	},
 };
 
 const PROGMEM tRFCodeFunctionItem RFU0Functions[fU0Count] = {
-	{eFSetSessionKey, .function = &setSessionKey, .type.fields.input = edtByteArray, .type.fields.output = edtNone },
-	{eFSetAddress, .function = &setMACAddress, .type.fields.input = edtByteArray, .type.fields.output = edtNone },
-	{eFGetStatistics, .function = &getStatistics, .type.fields.input = edtNone, .type.fields.output = edtUnspecified },
-    {eFResetTransactionId, .function = &resetTransactionId, .type.fields.input = edtNone, .type.fields.output = edtByte },
-	{eFNOP, .function = &rfNOP, .type.fields.input = edtNone, .type.fields.output = edtNone },
-	{eFSetRFChannel, .function = &rfSetRFChannel, .type.fields.input = edtByte, .type.fields.output = edtNone },
-	{eFSetMode, .function = &setMode, .type.fields.input = edtByte, .type.fields.output = edtNone },
+	{
+		.dataId.type = ediNode,
+		.dataId.dataId = eFSessionKey, 
+		.function = &setSessionKey, 
+		.type.nodeType.dataType = edtByteArray,
+		.type.nodeType.readable = false,
+		.type.nodeType.writable = true,
+	},
+	{
+		.dataId.type = ediNode,
+		.dataId.dataId = eFAddress, 
+		.function = &setMACAddress, 
+		.type.nodeType.dataType = edtByteArray,
+		.type.nodeType.readable = false,
+		.type.nodeType.writable = true,
+	},
+	{
+		.dataId.type = ediNode,
+		.dataId.dataId = eFStatistics,
+		.function = &getStatistics,
+		.type.nodeType.dataType = edtUnspecified,
+		.type.nodeType.readable = true,
+		.type.nodeType.writable = false,
+	},
+	{
+		.dataId.type = ediNode,
+		.dataId.dataId = eFRFChannel,
+		.function = &rfSetRFChannel,
+		.type.nodeType.dataType = edtByte,
+		.type.nodeType.readable = false,
+		.type.nodeType.writable = true,
+	},
+	{
+		.dataId.type = ediNode,
+		.dataId.dataId = eFMode,
+		.function = &setMode,
+		.type.nodeType.dataType = edtByte,
+		.type.nodeType.readable = false,
+		.type.nodeType.writable = true,
+	},
+    {
+		.dataId.type = ediMethod,
+		.dataId.dataId = eFResetTransactionId,
+		.function = &resetTransactionId, 
+		.type.methodType.input = edtNone, 
+		.type.methodType.output = edtByte 
+	},
+    {
+		.dataId.type = ediMethod,
+		.dataId.dataId = eFNOP,
+		.function = &rfNOP, 
+		.type.methodType.input = edtNone, 
+		.type.methodType.output = edtNone 
+	},
 };
 
 #endif

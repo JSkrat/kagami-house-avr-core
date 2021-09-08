@@ -18,18 +18,35 @@
     #pragma pack(1)
 #endif
 
-#define PROTOCOL_VERSION 0
+#define PROTOCOL_VERSION 1
+#define RESPONSE_PROTOCOL_VERSION 2
 
 // arguments are request and response
 // caller should allocate space for the response
 // unit (first argument) is guaranteed (by RF Parser) to be correct
 typedef uint8_t (*fRFFunction)(const uint8_t, const uint8_t, const scString*, sString*);
 
+typedef enum {
+	ediNode = 0,
+	ediMethod = 1
+} eDataIdType;
+
+typedef union {
+	struct {
+		eDataIdType type: 1;
+		char dataId: 7;
+	} data;
+	uint8_t byte;
+} fDataID;
+
 typedef struct {
 	uint8_t rqVersion;
 	uint8_t rqTransactionId;
 	uint8_t rqUnitId;
-	uint8_t rqFunctionId;
+	union {
+		fDataID rqFunctionId;
+		uint8_t byte;
+	} rqFunctionId;
 	uint8_t rqData[];
 } sRequest;
 
@@ -61,6 +78,8 @@ enum eResponseCodes {
 	ercResponseTooBig = 0xD0,
 
 	ercBadRequestData = 0xE0,
+	ercNodePermissionViolation = 0xE1,
+	ercBadArguments = 0xE2,
 	ercInternalError = 0xFF,
 };
 

@@ -41,6 +41,7 @@
 };*/
 
 // re-define that with code to run when enter and exit all RF functions
+// for example to blink led when packet received
 #define RF_FUNCTION(enter, unit, function)
 
 /*** USART ***/
