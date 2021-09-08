@@ -13,6 +13,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "Settings.h"
+#if defined(UNIT_TESTING) || defined(NOT_FIRMWARE)
+	#pragma pack(push,1)
+#endif
 
 // nodes are 0 - 7F, methods are 80 - FF
 typedef enum {
@@ -81,4 +84,7 @@ extern const tUnit *RFUnits;
 
 void functions_init(const tUnit *units, const unsigned int number);
 
+#if defined(UNIT_TESTING) || defined(NOT_FIRMWARE)
+	#pragma pack(pop)
+#endif
 #endif /* FUNCTIONS_H_ */

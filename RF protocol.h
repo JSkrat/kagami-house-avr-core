@@ -14,8 +14,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "sstring.h"
-#ifdef UNIT_TESTING
-    #pragma pack(1)
+#if defined(UNIT_TESTING) || defined(NOT_FIRMWARE)
+	#pragma pack(push,1)
 #endif
 
 #define PROTOCOL_VERSION 1
@@ -87,7 +87,7 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 void generateAdvertisement(uint8_t *packetLength, uint8_t *packetData);
 void protocolInit();
 
-#ifdef UNIT_TESTING
-    #pragma pack()
+#if defined(UNIT_TESTING) || defined(NOT_FIRMWARE)
+    #pragma pack(pop)
 #endif
 #endif /* PROTOCOL_H_ */
