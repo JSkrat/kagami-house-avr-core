@@ -30,9 +30,9 @@ typedef enum {
 
 // packets from uart
 //#define HEADER_SIZE (3)
-#define RESPONSE_HEADER_SIZE (4)
+#define UART_RESPONSE_HEADER_SIZE (4)
 typedef union {
-	uint8_t packageBuffer[(RESPONSE_HEADER_SIZE + PAYLOAD_SIZE)];
+	uint8_t packageBuffer[(UART_RESPONSE_HEADER_SIZE + PAYLOAD_SIZE)];
 	struct {
 		uint8_t protocolVersion;
 		eModemCommand command;
