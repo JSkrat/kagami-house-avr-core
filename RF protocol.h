@@ -15,7 +15,8 @@
 #include <stdint.h>
 #include "sstring.h"
 #if defined(UNIT_TESTING) || defined(NOT_FIRMWARE)
-	#pragma pack(push,1)
+    #pragma pack(push)
+    #pragma pack(1)
 #endif
 
 #define PROTOCOL_VERSION 1
@@ -26,7 +27,7 @@
 // unit (first argument) is guaranteed (by RF Parser) to be correct
 typedef uint8_t (*fRFFunction)(const uint8_t, const uint8_t, const scString*, sString*);
 
-typedef enum {
+typedef enum: uint8_t {
 	ediNode = 0,
 	ediMethod = 1
 } eDataIdType;
@@ -34,7 +35,7 @@ typedef enum {
 typedef union {
 	struct {
 		eDataIdType type: 1;
-		char dataId: 7;
+        uint8_t dataId: 7;
 	} data;
 	uint8_t byte;
 } fDataID;
