@@ -174,16 +174,18 @@ uint8_t textDescription(const uint8_t unit, const uint8_t function, const scStri
 
 const PROGMEM tRFCodeFunctionItem RFStandardFunctions[fUCount] = {
 	{
-		.dataId.type = ediNode,
-		.dataId.dataId = eFProperties,
+		.dataId.data = {
+			.type = ediNode,
+			.dataId = eFProperties,
+		},
 		.function = &getPropertiesOfUnit, 
 		.type.nodeType.dataType = edtUnspecified,
 		.type.nodeType.readable = true,
 		.type.nodeType.writable = false,
 	},
 	{
-		.dataId.type = ediNode,
-		.dataId.dataId = eFTextDescription, 
+		.dataId.data.type = ediNode,
+		.dataId.data.dataId = eFTextDescription, 
 		.function = &textDescription, 
 		.type.nodeType.dataType = edtString,
 		.type.nodeType.readable = true,
@@ -193,55 +195,55 @@ const PROGMEM tRFCodeFunctionItem RFStandardFunctions[fUCount] = {
 
 const PROGMEM tRFCodeFunctionItem RFU0Functions[fU0Count] = {
 	{
-		.dataId.type = ediNode,
-		.dataId.dataId = eFSessionKey, 
+		.dataId.data.type = ediNode,
+		.dataId.data.dataId = eFSessionKey, 
 		.function = &setSessionKey, 
 		.type.nodeType.dataType = edtByteArray,
 		.type.nodeType.readable = false,
 		.type.nodeType.writable = true,
 	},
 	{
-		.dataId.type = ediNode,
-		.dataId.dataId = eFAddress, 
+		.dataId.data.type = ediNode,
+		.dataId.data.dataId = eFAddress, 
 		.function = &setMACAddress, 
 		.type.nodeType.dataType = edtByteArray,
 		.type.nodeType.readable = false,
 		.type.nodeType.writable = true,
 	},
 	{
-		.dataId.type = ediNode,
-		.dataId.dataId = eFStatistics,
+		.dataId.data.type = ediNode,
+		.dataId.data.dataId = eFStatistics,
 		.function = &getStatistics,
 		.type.nodeType.dataType = edtUnspecified,
 		.type.nodeType.readable = true,
 		.type.nodeType.writable = false,
 	},
 	{
-		.dataId.type = ediNode,
-		.dataId.dataId = eFRFChannel,
+		.dataId.data.type = ediNode,
+		.dataId.data.dataId = eFRFChannel,
 		.function = &rfSetRFChannel,
 		.type.nodeType.dataType = edtByte,
 		.type.nodeType.readable = false,
 		.type.nodeType.writable = true,
 	},
 	{
-		.dataId.type = ediNode,
-		.dataId.dataId = eFMode,
+		.dataId.data.type = ediNode,
+		.dataId.data.dataId = eFMode,
 		.function = &setMode,
 		.type.nodeType.dataType = edtByte,
 		.type.nodeType.readable = false,
 		.type.nodeType.writable = true,
 	},
     {
-		.dataId.type = ediMethod,
-		.dataId.dataId = eFResetTransactionId,
+		.dataId.data.type = ediMethod,
+		.dataId.data.dataId = eFResetTransactionId,
 		.function = &resetTransactionId, 
 		.type.methodType.input = edtNone, 
 		.type.methodType.output = edtByte 
 	},
     {
-		.dataId.type = ediMethod,
-		.dataId.dataId = eFNOP,
+		.dataId.data.type = ediMethod,
+		.dataId.data.dataId = eFNOP,
 		.function = &rfNOP, 
 		.type.methodType.input = edtNone, 
 		.type.methodType.output = edtNone 

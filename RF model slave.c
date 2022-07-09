@@ -26,18 +26,18 @@ void switchMode(eModeType newMode);
 static void responseTimeoutEvent();
 
 #ifndef UNIT_TESTING
-#if 0 == RF_TIMER
-ISR(TIMER0_COMPA_vect) {
-#elif 2 == RF_TIMER
-ISR(TIMER2_COMPA_vect) {
-#endif
-	// this is being called every millisecond
-	if (0 <= responseTimeout) {
-		if (0 > --responseTimeout) {
-			responseTimeoutEvent();
+	#if 0 == RF_TIMER
+		ISR(TIMER0_COMPA_vect) {
+	#elif 2 == RF_TIMER
+		ISR(TIMER2_COMPA_vect) {
+	#endif
+		// this is being called every millisecond
+		if (0 <= responseTimeout) {
+			if (0 > --responseTimeout) {
+				responseTimeoutEvent();
+			}
 		}
 	}
-}
 #endif
 
 void rf_slave_init() {

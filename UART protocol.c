@@ -4,6 +4,7 @@
  * Created: 19.04.2020 20:57:19
  *  Author: Mintytail
  */ 
+#include "defines.h"
 #if BT_MASTER == BUILD_TYPE || BT_DEBUG == BUILD_TYPE
 
 #include "UART protocol.h"
@@ -11,6 +12,7 @@
 #include "sstring.h"
 #include <stddef.h>
 #include <stdbool.h>
+#include <avr/pgmspace.h>
 
 // packet prefixes
 #define uPPProtoVer 0
