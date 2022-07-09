@@ -73,7 +73,7 @@ typedef struct {
 	const eSetting description;
 } tUnit;
 
-#define fUCount 3
+#define fUCount 2
 extern const tRFCodeFunctionItem RFStandardFunctions[fUCount];
 
 #define fU0Count 7

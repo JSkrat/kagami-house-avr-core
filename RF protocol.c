@@ -97,7 +97,7 @@ tRFCodeFunctionItem findFunctionByCode(uint8_t unit, fDataID code) {
 		}
 	}
 	for (uint8_t i = 0; i < count; i++) {
-		char iCode = pgm_read_byte(&(list[i].dataId));
+		uint8_t iCode = pgm_read_byte(&(list[i].dataId));
 		if (iCode == code.byte) {
 			ret.dataId.byte = iCode;
 			ret.function = pgm_read_ptr(&(list[i].function));
@@ -112,6 +112,10 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 	RF_FUNCTION(true, 0, 0);
 	// response should be already allocated for that function
 	#define REQUEST_DATA ((const sRequest*) requestData)
+	fDataID rqFunctionId = {
+		.data.type = (REQUEST_DATA->rqFunctionId.byte & fDataID_type_mask) >> fDataID_type_offset,
+		.data.dataId = (REQUEST_DATA->rqFunctionId.byte & fDataID_dataId_mask) >> fDataID_dataId_offset,
+	};
 	#define RESPONSE_DATA ((sResponse*) responseData)
 	enum eResponseCodes validation = validatePacket(requestLength, REQUEST_DATA);
 	RESPONSE_DATA->rsVersion = RESPONSE_PROTOCOL_VERSION;
@@ -120,12 +124,13 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 	*responseLength = RESPONSE_HEADER_SIZE; // length of the empty response, without any data
 	switch (validation) {
 		case ercOk: {
-            tRFCodeFunctionItem methodItem = findFunctionByCode(REQUEST_DATA->rqUnitId, REQUEST_DATA->rqFunctionId.rqFunctionId);
+            tRFCodeFunctionItem methodItem = findFunctionByCode(REQUEST_DATA->rqUnitId, rqFunctionId);
 			if (NULL == methodItem.function) {
 				RESPONSE_DATA->rsCode = ercBadFunctionId;
 				*responseLength += 2;
 				RESPONSE_DATA->rsData[0] = REQUEST_DATA->rqUnitId;
-				RESPONSE_DATA->rsData[1] = REQUEST_DATA->rqFunctionId.byte;
+				RESPONSE_DATA->rsData[1] = ((rqFunctionId.data.type << fDataID_type_offset) & fDataID_type_mask)
+										 | ((rqFunctionId.data.dataId << fDataID_dataId_offset) & fDataID_dataId_mask);
 				break;
 			}
 			const scString requestArg = {
@@ -146,7 +151,7 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 			// run the function \0/
 			RESPONSE_DATA->rsCode = (*(methodItem.function))(
 				REQUEST_DATA->rqUnitId,
-				REQUEST_DATA->rqFunctionId.byte,
+				rqFunctionId.byte,
 				&requestArg,
 				&responseArg
 			);

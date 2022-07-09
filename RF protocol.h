@@ -28,18 +28,22 @@
 typedef uint8_t (*fRFFunction)(const uint8_t, const uint8_t, const scString*, sString*);
 
 #if defined(UNIT_TESTING) || defined(NOT_FIRMWARE)
-typedef enum: uint8_t {
+	typedef enum: uint8_t {
 #else
-typedef enum {
+	typedef enum {
 #endif
-	ediNode = 0,
-	ediMethod = 1
-} eDataIdType;
+		ediNode = 0,
+		ediMethod = 1
+	} eDataIdType;
 
+#define fDataID_type_mask 0x80
+#define fDataID_type_offset 7
+#define fDataID_dataId_mask 0x7F
+#define fDataID_dataId_offset 0
 typedef union {
 	struct {
 		eDataIdType type: 1;
-        uint8_t dataId: 7;
+		uint8_t dataId: 7;
 	} data;
 	uint8_t byte;
 } fDataID;
