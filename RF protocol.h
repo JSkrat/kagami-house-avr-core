@@ -27,14 +27,10 @@
 // unit (first argument) is guaranteed (by RF Parser) to be correct
 typedef uint8_t (*fRFFunction)(const uint8_t, const uint8_t, const scString*, sString*);
 
-#if defined(UNIT_TESTING) || defined(NOT_FIRMWARE)
-	typedef enum: uint8_t {
-#else
-	typedef enum {
-#endif
-		ediNode = 0,
-		ediMethod = 1
-	} eDataIdType;
+typedef enum {
+    ediNode = 0,
+    ediMethod = 1
+} eDataIdType;
 
 #define fDataID_type_mask 0x80
 #define fDataID_type_offset 7
