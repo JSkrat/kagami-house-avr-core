@@ -60,7 +60,6 @@ void rf_slave_init() {
 	init_rf_info();
 	readSetting(esAddress, &ListenAddress);
 	readSetting(esMode, &eMode);
-	
 	switchMode(eMode);
 }
 
@@ -126,9 +125,12 @@ void setListenAddress(t_address *address) {
 }
 
 void switchMode(eModeType newMode) {
-	if (emNone == newMode || emAmount <= newMode) eMode = emSearchMaster;
-	else eMode = newMode;
-	saveSetting(esMode, &eMode);
+	if (emNone == newMode || emAmount <= newMode) newMode = emSearchMaster;
+	// extra layer of eeprom protection: do not save if it is already that value
+	if (eMode != newMode) {
+		eMode = newMode;
+		saveSetting(esMode, &eMode);
+	}
 	switch (eMode) {
 		case emNormalSlave: {
 			responseTimeout = -1;

@@ -149,8 +149,22 @@ uint8_t getPropertiesOfUnit(const uint8_t unit, const uint8_t function, const sc
 		const tRFCodeFunctionItem *item;
 		if (fUCount > i) item = &RFStandardFunctions[i];
 		else item = &list[i-fUCount];
-		response->data[i*2] = pgm_read_byte(&(item->dataId));
-		response->data[i*2+1] = pgm_read_byte(&(item->type.byte));
+		fDataID d = {.byte = pgm_read_byte(&(item->dataId))};
+		response->data[i*2] = ((d.data.type << fDataID_type_offset) & fDataID_type_mask)
+							| ((d.data.dataId << fDataID_dataId_offset) & fDataID_dataId_mask);
+		tRFCodeFunctionType t = {.byte = pgm_read_byte(&(item->type.byte))};
+		switch (d.data.type) {
+		case ediMethod: {
+			response->data[i*2+1] = (t.methodType.input << fMethodType_input_offset) | (t.methodType.output << fMethodType_output_offset);
+			break;
+		}
+		case ediNode: {
+			response->data[i*2+1] = (t.nodeType.readable << fNodeType_readable_offset)
+								  | (t.nodeType.writable << fNodeType_writable_offset)
+								  | (t.nodeType.dataType << fNodeType_dataType_offset);
+			break;
+		}
+		}
 	}
 	return ercOk;
 }

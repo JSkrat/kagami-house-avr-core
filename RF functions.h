@@ -19,12 +19,13 @@
 
 // nodes are 0 - 7F, methods are 80 - FF
 typedef enum {
+	// nodes
 	eFSessionKey = 0x10,
 	eFAddress = 0x12,
 	eFStatistics = 0x13,
 	eFRFChannel = 0x16,
 	eFMode = 0x17,
-	
+	// methods, separate namespace
 	eFNOP = 0x10,
     eFResetTransactionId = 0x11,
 } eU0Functions;
@@ -45,25 +46,31 @@ typedef enum {
 	edtUnspecified = 0xF
 } eDataType;
 
+#define fMethodType_input_offset 4
+#define fMethodType_output_offset 0
 typedef struct {
 	eDataType input: 4;
 	eDataType output: 4;
 } fMethodType;
 
+#define fNodeType_readable_offset 7
+#define fNodeType_writable_offset 6
+#define fNodeType_dataType_offset 0
 typedef struct {
 	bool readable: 1;
 	bool writable: 1;
-	char _reserved: 2;
 	eDataType dataType: 4;
 } fNodeType;
 
+typedef union {
+	uint8_t byte;
+	fMethodType methodType;
+	fNodeType nodeType;
+} tRFCodeFunctionType;
+
 typedef struct { // 4 bytes
 	fDataID dataId;
-	union {
-		uint8_t byte;
-		fMethodType methodType;
-		fNodeType nodeType;
-	} type;
+	tRFCodeFunctionType type;
 	fRFFunction function;
 } tRFCodeFunctionItem;
 
