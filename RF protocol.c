@@ -157,7 +157,7 @@ void generateResponse(const uint8_t requestLength, const uint8_t *requestData, u
 			);
 			*responseLength += responseArg.length;
 			if (PAYLOAD_SIZE < *responseLength) {
-				RF_ERROR(1);
+				RF_ERROR(ereBadResponseLength);
 				// in case error handler does not halt
 				*responseLength = 1;
 				RESPONSE_DATA->rsCode = ercInternalError;

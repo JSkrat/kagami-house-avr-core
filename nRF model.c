@@ -139,7 +139,7 @@ void nRF_listen(const uint8_t *address) {
 void nRF_transmit(uint8_t *address, uint8_t length, uint8_t *data) {
 	// validation first
 	if (PAYLOAD_SIZE < length) {
-		RF_ERROR(2);
+		RF_ERROR(ereBadPayloadLength);
 		return;
 	}
 	// without CE changing from low to high transmission won't start

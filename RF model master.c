@@ -90,7 +90,7 @@ void dataReceived(sString *address, sString *payload) {
 	// event, one per received packet
 	tRfPacket *request = nextRFBufferFreeElement();
 	if (NULL == request) {
-		RF_ERROR(3);
+		RF_ERROR(ereReceiveBufferOverflow);
 		return;
 	}
 	request->type = eptData;
@@ -107,7 +107,7 @@ void dataTransmitted(sString *address, sString *payload) {
 	// ack received, tx successful
 	tRfPacket *request = nextRFBufferFreeElement();
 	if (NULL == request) {
-		RF_ERROR(4);
+		RF_ERROR(ereTransmitBufferOverflow);
 		return;
 	}
 	request->type = eptAckOk;
@@ -123,7 +123,7 @@ void transmissionFailed(sString *address, sString *payload) {
 	// no ack received n times
 	tRfPacket *request = nextRFBufferFreeElement();
 	if (NULL == request) {
-		RF_ERROR(5);
+		RF_ERROR(ereTransmitFailedBufferOverflow);
 		return;
 	}
 	request->type = eptAckTimeout;
@@ -135,7 +135,7 @@ static inline void responseTimeoutEvent() {
 	// no response from the requested slave
 	tRfPacket *packet = nextRFBufferFreeElement();
 	if (NULL == packet) {
-		RF_ERROR(6);
+		RF_ERROR(ereResponseTimeoutBufferOverflow);
 		return;
 	}
 	packet->type = eptResponseTimeout;
